@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tafsiran Pasar Gadai Indonesia</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"],
+        input[type="color"] {
+            width: 100%;
+            padding: 5px;
+        }
+
+        #hargaTafsiranLabel {
+            font-weight: bold;
+
+            color: rgb(0, 0, 0);
+        }
+
+        #installmentTable {
+            margin-top: 30px;
+        }
+
+        #installmentTable h3 {
+            margin-top: 0;
+        }
+
+        #installmentTable td {
+            padding-top: 10px;
+        }
+
+        /* CSS untuk tabel angsuran */
+        #installmentTable table {
+            background-color: yellow;
+            width: 100%;
+        }
+
+        /* CSS untuk membuat nama HP dapat di-scroll */
+        #namaHp {
+            max-width: 100%;
+            width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Tafsiran Pasar Gadai Indonesia</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama HP</th>
+                <th>Merek HP</th>
+                <th>RAM</th>
+                <th>Harga Tafsiran (Rp)</th>
+                <th>Jumlah Bulan</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" id="namaHp" placeholder="Nama HP" oninput="setMerek()">
+                </td>
+                <td>
+                    <select id="merekHp">
+                        <option value="">Pilih Merek</option>
+                        <option value="Apple">Apple</option>
+                        <option value="Samsung">Samsung</option>
+                        <option value="Oppo">Oppo</option>
+                        <option value="Infinix">Infinix</option>
+                        <option value="Huawei">Huawei</option>
+                        <option value="Xiaomi">Xiaomi</option>
+                        <option value="Realme">Realme</option>
+                        <option value="Asus">Asus</option>
+                        <option value="Vivo">Vivo</option>
+                        <option value="Lenovo">Lenovo</option>
+                    </select>
+                </td>
+                <td>
+                    <select id="ram">
+                        <option value="4/32">4/32</option>
+                        <option value="4/64">4/64</option>
+                        <option value="4/128">4/128</option>
+                        <option value="6/128">6/128</option>
+                        <option value="6/256">6/256</option>
+                        <option value="6/512">6/512</option>
+                        <option value="8/128">8/128</option>
+                        <option value="8/256">8/256</option>
+                        <option value="8/512">8/512</option>
+                    </select>
+                </td>
+                <td><input type="number" id="hargaTafsiran"></td>
+                <td><input type="number" id="jumlahBulan"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="hargaTafsiranLabel">Harga Tafsiran: <span id="hargaTafsiranText"></span></div>
+
+    <div id="installmentTable"></div>
+
+    <script>
+        function setMerek() {
+            var namaHpInput = document.getElementById('namaHp').value;
+            var merekHp = document.getElementById('merekHp');
+
+            // Pisahkan kata pertama dari nama HP
+            var kataPertama = namaHpInput.split(' ')[0].toLowerCase();
+
+            switch (kataPertama.toLowerCase()) {
+                case 'iphone':
+                    merekHp.value = 'Apple';
+                    break;
+                case 'vivo':
+                    merekHp.value = 'Vivo';
+                    break;
+                case 'lenovo':
+                    merekHp.value = 'Lenovo';
+                    break;
+                case 'assus':
+                    merekHp.value = 'Assus';
+                    break;
+                case 'galaxy':
+                    merekHp.value = 'Samsung';
+                    break;
+                case 'samsung':
+                    merekHp.value = 'Samsung';
+                    break;
+                case 'oppo':
+                    merekHp.value = 'Oppo';
+                    break;
+                case 'infinix':
+                    merekHp.value = 'Infinix';
+                    break;
+                case 'huawei':
+                    merekHp.value = 'Huawei';
+                    break;
+                case 'xiaomi':
+                    merekHp.value = 'Xiaomi';
+                    break;
+                case 'realme':
+                    merekHp.value = 'Realme';
+                    break;
+                case 'asus':
+                    merekHp.value = 'Asus';
+                    break;
+                case 'vivo':
+                    merekHp.value = 'Vivo';
+                    break;
+                case 'lenovo':
+                    merekHp.value = 'Lenovo';
+                    break;
+                default:
+                    merekHp.value = '';
+            }
+        }
+
+        document.getElementById('hargaTafsiran').addEventListener('input', function () {
+            var hargaTafsiran = parseInt(this.value);
+            document.getElementById('hargaTafsiranText').innerText = formatRupiah(hargaTafsiran);
+            calculateInstallment(hargaTafsiran);
+        });
+
+        document.getElementById('jumlahBulan').addEventListener('input', function () {
+            var hargaTafsiran = parseInt(document.getElementById('hargaTafsiran').value);
+            calculateInstallment(hargaTafsiran);
+        });
+
+        function calculateInstallment(hargaTafsiran) {
+            var installmentTable = document.getElementById('installmentTable');
+            var jumlahBulan = parseInt(document.getElementById('jumlahBulan').value);
+            var bunga = 0.088; // 8.8%
+            var installmentHTML = '<h3>Angsuran</h3><table><thead><tr><th>Bulan</th><th>Angsuran (Rp)</th></tr></thead><tbody>';
+
+            for (var i = 1; i <= jumlahBulan; i++) {
+                var angsuran = ((hargaTafsiran * bunga) + hargaTafsiran) / jumlahBulan;
+                installmentHTML += '<tr><td>' + i + '</td><td>' + formatRupiah(angsuran.toFixed(2)) + '</td></tr>';
+            }
+
+            installmentHTML += '</tbody></table>';
+            installmentTable.innerHTML = installmentHTML;
+        }
+
+        function formatRupiah(angka) {
+            var number_string = angka.toString(),
+                sisa = number_string.length % 3,
+                rupiah = number_string.substr(0, sisa),
+                ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            return 'Rp ' + rupiah;
+        }
+    </script>
+</body>
+
+</html>
